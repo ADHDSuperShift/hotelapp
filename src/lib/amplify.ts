@@ -2,7 +2,7 @@ import { Amplify } from 'aws-amplify'
 // Prefer modern amplifyconfiguration.json if present, otherwise aws-exports.js
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - js module without types
-import awsExports from '@/aws-exports'
+import awsExports from '@/aws-exports.js'
 
 let configured = false
 
