@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PhotoManager from './PhotoManager';
+// import PhotoManager from './PhotoManager'; // Removed - frontend only mode
 
 interface AdminPanelProps {}
 
@@ -67,7 +67,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = () => {
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-slate-800">Photo Management</h2>
             <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
-              <PhotoManager />
+              <div className="text-center py-12">
+                <p className="text-lg text-slate-600 mb-2">Photo Management Temporarily Unavailable</p>
+                <p className="text-sm text-slate-500">Feature removed for frontend-only deployment</p>
+              </div>
             </div>
           </div>
         )}
