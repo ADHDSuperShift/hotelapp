@@ -27,27 +27,7 @@
       "service": "Cognito"
     }
   },
-  "custom": {
-    "cloudfront": {
-      "build": false,
-      "dependsOn": [
-        {
-          "attributes": [
-            "BucketName",
-            "Region"
-          ],
-          "category": "storage",
-          "resourceName": "hotel"
-        }
-      ],
-      "output": {
-        "DistributionId": "DistributionId",
-        "DomainName": "DomainName"
-      },
-      "providerPlugin": "awscloudformation",
-      "service": "customResource"
-    }
-  },
+
   "function": {
     "S3Trigger42895e02": {
       "build": true,
