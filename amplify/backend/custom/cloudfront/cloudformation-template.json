@@ -1,0 +1,191 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"14.0.1\",\"stackType\":\"custom-customResource\",\"metadata\":{\"whyContinueWithGen1\":\"Prefer not to answer\"}}",
+  "Parameters": {
+    "env": {
+      "Type": "String"
+    },
+    "storagehotelBucketName": {
+      "Type": "String"
+    },
+    "storagehotelRegion": {
+      "Type": "String",
+      "Default": "us-east-1"
+    },
+    "customDomain": {
+      "Type": "String",
+      "Default": ""
+    },
+    "acmCertificateArn": {
+      "Type": "String",
+      "Default": ""
+    }
+  },
+  "Conditions": {
+    "HasCustomDomain": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "customDomain"
+            },
+            ""
+          ]
+        }
+      ]
+    },
+    "HasCertArn": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "acmCertificateArn"
+            },
+            ""
+          ]
+        }
+      ]
+    }
+  },
+  "Resources": {
+    "OriginAccessControl": {
+      "Type": "AWS::CloudFront::OriginAccessControl",
+      "Properties": {
+        "OriginAccessControlConfig": {
+          "Name": {
+            "Fn::Sub": "${storagehotelBucketName}-${env}-oac"
+          },
+          "OriginAccessControlOriginType": "s3",
+          "SigningBehavior": "always",
+          "SigningProtocol": "sigv4"
+        }
+      }
+    },
+    "BucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "storagehotelBucketName"
+        },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "AllowCloudFrontServicePrincipalReadOnly",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudfront.amazonaws.com"
+              },
+              "Action": [
+                "s3:GetObject"
+              ],
+              "Resource": {
+                "Fn::Sub": "arn:aws:s3:::${storagehotelBucketName}/*"
+              },
+              "Condition": {
+                "StringEquals": {
+                  "AWS:SourceArn": {
+                    "Fn::Sub": "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "CloudFrontDistribution": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Enabled": true,
+          "HttpVersion": "http2and3",
+          "DefaultRootObject": "index.html",
+          "Origins": [
+            {
+              "Id": {
+                "Fn::Sub": "s3-${storagehotelBucketName}"
+              },
+              "DomainName": {
+                "Fn::Sub": "${storagehotelBucketName}.s3.${storagehotelRegion}.amazonaws.com"
+              },
+              "S3OriginConfig": {
+                "OriginAccessIdentity": ""
+              },
+              "OriginAccessControlId": {
+                "Ref": "OriginAccessControl"
+              }
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "TargetOriginId": {
+              "Fn::Sub": "s3-${storagehotelBucketName}"
+            },
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "AllowedMethods": [
+              "GET",
+              "HEAD"
+            ],
+            "CachedMethods": [
+              "GET",
+              "HEAD"
+            ],
+            "Compress": true,
+            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6"
+          },
+          "PriceClass": "PriceClass_100",
+          "CustomErrorResponses": [
+            {
+              "ErrorCode": 404,
+              "ResponseCode": 200,
+              "ResponsePagePath": "/index.html"
+            }
+          ],
+          "Aliases": {
+            "Fn::If": [
+              "HasCustomDomain",
+              [
+                {
+                  "Ref": "customDomain"
+                }
+              ],
+              {
+                "Ref": "AWS::NoValue"
+              }
+            ]
+          },
+          "ViewerCertificate": {
+            "Fn::If": [
+              "HasCertArn",
+              {
+                "AcmCertificateArn": {
+                  "Ref": "acmCertificateArn"
+                },
+                "SslSupportMethod": "sni-only",
+                "MinimumProtocolVersion": "TLSv1.2_2021"
+              },
+              {
+                "CloudFrontDefaultCertificate": true
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "DistributionId": {
+      "Value": {
+        "Ref": "CloudFrontDistribution"
+      }
+    },
+    "DomainName": {
+      "Value": {
+        "Fn::GetAtt": [
+          "CloudFrontDistribution",
+          "DomainName"
+        ]
+      }
+    }
+  }
+}

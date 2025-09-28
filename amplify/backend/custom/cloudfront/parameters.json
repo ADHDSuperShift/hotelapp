@@ -1,0 +1,5 @@
+{
+  "env": { "Ref": "env" },
+  "storagehotelBucketName": { "Fn::GetAtt": ["storagehotel", "Outputs.BucketName"] },
+  "storagehotelRegion": { "Fn::GetAtt": ["storagehotel", "Outputs.Region"] }
+}
