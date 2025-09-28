@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-hotel-dev-8be95-authRole",
+      "UnauthRoleArn": "arn:aws:iam::628835453038:role/amplify-hotel-dev-8be95-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::628835453038:role/amplify-hotel-dev-8be95-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-hotel-dev-8be95-deployment",
+      "UnauthRoleName": "amplify-hotel-dev-8be95-unauthRole",
+      "StackName": "amplify-hotel-dev-8be95",
+      "StackId": "arn:aws:cloudformation:us-east-1:628835453038:stack/amplify-hotel-dev-8be95/d845a140-9c3f-11f0-91e2-1261b795a9f7",
+      "AmplifyAppId": "d25wlq96bxm947"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d25wlq96bxm947",
+          "type": "cicd"
+        }
+      }
+    }
+  }
+}
