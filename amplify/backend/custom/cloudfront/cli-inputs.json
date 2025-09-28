@@ -1,5 +1,5 @@
 {
-  "build": true,
+  "build": false,
   "providerPlugin": "awscloudformation",
   "service": "customResource"
 }

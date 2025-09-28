@@ -29,7 +29,7 @@
   },
   "custom": {
     "cloudfront": {
-      "build": true,
+      "build": false,
       "dependsOn": [
         {
           "attributes": [

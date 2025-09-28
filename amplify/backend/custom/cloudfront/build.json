@@ -1,4 +1,4 @@
 {
-  "build": true,
+  "build": false,
   "providerPlugin": "awscloudformation"
 }
