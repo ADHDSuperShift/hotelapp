@@ -50,20 +50,41 @@ function buildPublicUrl(key: string): string | undefined {
   try {
     const bucket = (awsExports as any).aws_user_files_s3_bucket
     const region = (awsExports as any).aws_user_files_s3_bucket_region || (awsExports as any).aws_project_region
+    console.log('AWS Config:', { bucket, region, key })
     if (bucket && region) {
       // Objects uploaded with accessLevel 'guest' are under the 'public/' prefix
-      return `https://${bucket}.s3.${region}.amazonaws.com/public/${key}`
+      const url = `https://${bucket}.s3.${region}.amazonaws.com/public/${key}`
+      console.log('Built public URL:', url)
+      return url
     }
-  } catch {}
+    console.warn('Missing bucket or region in aws-exports')
+  } catch (e) {
+    console.error('Error building public URL:', e)
+  }
   return undefined
 }
 
 export async function uploadImageToCloud(file: File): Promise<{ key: string; url: string }> {
+  console.log('Uploading image to cloud:', file.name)
   const key = `content/images/${Date.now()}-${Math.random().toString(36).slice(2)}${extOf(file.name)}`
-  await (await uploadData({ key, data: file, options: { accessLevel: 'guest', contentType: file.type || 'application/octet-stream' } })).result
-  const direct = buildPublicUrl(key)
-  if (direct) return { key, url: direct }
-  // fallback to signed URL if bucket info missing
-  const { url } = await getUrl({ key, options: { accessLevel: 'guest', expiresIn: 24 * 60 * 60 } })
-  return { key, url: url.toString() }
+  
+  try {
+    await (await uploadData({ key, data: file, options: { accessLevel: 'guest', contentType: file.type || 'application/octet-stream' } })).result
+    console.log('Upload successful, key:', key)
+    
+    const direct = buildPublicUrl(key)
+    if (direct) {
+      console.log('Using direct URL:', direct)
+      return { key, url: direct }
+    }
+    
+    // fallback to signed URL if bucket info missing
+    console.log('Falling back to signed URL')
+    const { url } = await getUrl({ key, options: { accessLevel: 'guest', expiresIn: 24 * 60 * 60 } })
+    console.log('Signed URL:', url.toString())
+    return { key, url: url.toString() }
+  } catch (error) {
+    console.error('Upload failed:', error)
+    throw error
+  }
 }
