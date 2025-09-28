@@ -3,7 +3,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+  - npm ci
+  # Ensure frontend has aws-exports.js generated for this env
+  - npx --yes @aws-amplify/cli@12.x amplify pull --appId d25wlq96bxm947 --envName dev --yes
     build:
       commands:
         - npm run build
