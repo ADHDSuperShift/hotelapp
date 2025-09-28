@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useAppContext } from '@/contexts/AppContext';
 
 interface DrinkItem {
   id: string;
@@ -15,6 +16,13 @@ interface BarSectionProps {
 
 export const BarSection: React.FC<BarSectionProps> = ({ isAdmin, onEditDrink }) => {
   const [activeCategory, setActiveCategory] = useState<'cocktails' | 'wines' | 'spirits'>('cocktails');
+  const { photos } = useAppContext();
+  const coverUrl = useMemo(() => {
+    const featured = photos.find(p => p.section === 'bar' && p.featured)
+    if (featured) return featured.url
+    const first = photos.filter(p => p.section === 'bar').sort((a,b) => a.order - b.order)[0]
+    return first?.url
+  }, [photos])
 
   const drinkItems: DrinkItem[] = [
     {
@@ -75,7 +83,7 @@ export const BarSection: React.FC<BarSectionProps> = ({ isAdmin, onEditDrink }) 
 
         <div 
           className="h-64 sm:h-80 lg:h-96 bg-cover bg-center rounded-lg mb-12"
-          style={{ backgroundImage: 'url(https://d64gsuwffb70l.cloudfront.net/68d7bd0a24155df4f21072e9_1758969790377_b96b5579.webp)' }}
+          style={{ backgroundImage: `url(${coverUrl || 'https://d64gsuwffb70l.cloudfront.net/68d7bd0a24155df4f21072e9_1758969790377_b96b5579.webp'})` }}
         />
 
         <div className="flex flex-wrap justify-center mb-8 border-b">

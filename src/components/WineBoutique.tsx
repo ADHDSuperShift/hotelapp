@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useAppContext } from '@/contexts/AppContext';
 
 interface Wine {
   id: string;
@@ -17,6 +18,13 @@ interface WineBoutiqueProps {
 
 export const WineBoutique: React.FC<WineBoutiqueProps> = ({ isAdmin, onEditWine }) => {
   const [selectedType, setSelectedType] = useState<'all' | 'red' | 'white' | 'rosé' | 'sparkling'>('all');
+  const { photos } = useAppContext();
+  const coverUrl = useMemo(() => {
+    const featured = photos.find(p => p.section === 'wine-boutique' && p.featured)
+    if (featured) return featured.url
+    const first = photos.filter(p => p.section === 'wine-boutique').sort((a,b) => a.order - b.order)[0]
+    return first?.url
+  }, [photos])
 
   const wines: Wine[] = [
     {
@@ -91,7 +99,7 @@ export const WineBoutique: React.FC<WineBoutiqueProps> = ({ isAdmin, onEditWine 
 
         <div 
           className="h-64 sm:h-80 lg:h-96 bg-cover bg-center rounded-lg mb-12"
-          style={{ backgroundImage: 'url(https://d64gsuwffb70l.cloudfront.net/68d7bd0a24155df4f21072e9_1758969794284_13db8d39.webp)' }}
+          style={{ backgroundImage: `url(${coverUrl || 'https://d64gsuwffb70l.cloudfront.net/68d7bd0a24155df4f21072e9_1758969794284_13db8d39.webp'})` }}
         />
 
         <div className="flex flex-wrap justify-center mb-8 border-b">

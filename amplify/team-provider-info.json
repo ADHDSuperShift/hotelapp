@@ -17,6 +17,18 @@
           "appId": "d25wlq96bxm947",
           "type": "cicd"
         }
+      },
+      "auth": {
+        "hotelb925575a": {}
+      },
+      "function": {
+        "S3Triggerfaebcc5b": {
+          "deploymentBucketName": "amplify-hotel-dev-8be95-deployment",
+          "s3Key": "amplify-builds/S3Triggerfaebcc5b-506f41644878434c3641-build.zip"
+        }
+      },
+      "storage": {
+        "hotel": {}
       }
     }
   }

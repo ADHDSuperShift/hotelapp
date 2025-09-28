@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useAppContext } from '@/contexts/AppContext';
 
 interface MenuItem {
   id: string;
@@ -16,6 +17,13 @@ interface RestaurantSectionProps {
 
 export const RestaurantSection: React.FC<RestaurantSectionProps> = ({ isAdmin, onEditMenu }) => {
   const [activeTab, setActiveTab] = useState<'starters' | 'mains' | 'desserts'>('starters');
+  const { photos } = useAppContext();
+  const coverUrl = useMemo(() => {
+    const featured = photos.find(p => p.section === 'restaurant' && p.featured)
+    if (featured) return featured.url
+    const first = photos.filter(p => p.section === 'restaurant').sort((a,b) => a.order - b.order)[0]
+    return first?.url
+  }, [photos])
 
   const menuItems: MenuItem[] = [
     {
@@ -82,7 +90,7 @@ export const RestaurantSection: React.FC<RestaurantSectionProps> = ({ isAdmin, o
 
         <div 
           className="h-64 sm:h-80 lg:h-96 bg-cover bg-center rounded-lg mb-12"
-          style={{ backgroundImage: 'url(https://d64gsuwffb70l.cloudfront.net/68d7bd0a24155df4f21072e9_1758969786734_f2deb808.webp)' }}
+          style={{ backgroundImage: `url(${coverUrl || 'https://d64gsuwffb70l.cloudfront.net/68d7bd0a24155df4f21072e9_1758969786734_f2deb808.webp'})` }}
         />
 
         <div className="flex flex-wrap justify-center mb-8 border-b">

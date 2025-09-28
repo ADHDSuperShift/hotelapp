@@ -1,11 +1,22 @@
-// Amplify configuration removed - running in frontend-only mode
-// Previously configured for us-east-1 with Auth and Storage
+import { Amplify } from 'aws-amplify'
+// Prefer modern amplifyconfiguration.json if present, otherwise aws-exports.js
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - js module without types
+import awsExports from '@/aws-exports'
 
-// import { Amplify } from 'aws-amplify'
-// import awsconfig from '@/aws-exports'
+let configured = false
 
-// Configure Amplify with generated config (already pinned to us-east-1)
 export function configureAmplify() {
-  console.log('Frontend-only mode - no AWS backend configured')
-  // Amplify.configure(awsconfig)
+  if (configured) return
+  try {
+    Amplify.configure(awsExports)
+    configured = true
+    console.log('Amplify configured')
+  } catch (e) {
+    console.warn('Amplify not configured, running in frontend-only mode', e)
+  }
+}
+
+export function isAmplifyConfigured() {
+  return configured
 }

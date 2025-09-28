@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useAppContext } from '@/contexts/AppContext';
 
 interface Event {
   id: string;
@@ -24,6 +25,13 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
   onBookEvent 
 }) => {
   const [selectedType, setSelectedType] = useState<'all' | 'wedding' | 'conference' | 'dining' | 'celebration'>('all');
+  const { photos } = useAppContext();
+  const coverUrl = useMemo(() => {
+    const featured = photos.find(p => p.section === 'events' && p.featured)
+    if (featured) return featured.url
+    const first = photos.filter(p => p.section === 'events').sort((a,b) => a.order - b.order)[0]
+    return first?.url
+  }, [photos])
 
   const events: Event[] = [
     {
@@ -88,7 +96,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
 
         <div 
           className="h-64 sm:h-80 lg:h-96 bg-cover bg-center rounded-lg mb-12"
-          style={{ backgroundImage: 'url(https://d64gsuwffb70l.cloudfront.net/68d7bd0a24155df4f21072e9_1758969797228_e3e4e70f.webp)' }}
+          style={{ backgroundImage: `url(${coverUrl || 'https://d64gsuwffb70l.cloudfront.net/68d7bd0a24155df4f21072e9_1758969797228_e3e4e70f.webp'})` }}
         />
 
         <div className="flex flex-wrap justify-center mb-8 border-b">

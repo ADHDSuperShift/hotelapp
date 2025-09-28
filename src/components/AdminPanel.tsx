@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-// import PhotoManager from './PhotoManager'; // Removed - frontend only mode
+import PhotoEditor from './PhotoEditor';
+import RoomsAdmin from './RoomsAdmin';
 
 interface AdminPanelProps {}
 
 export const AdminPanel: React.FC<AdminPanelProps> = () => {
-  const [activeSection, setActiveSection] = useState<'dashboard' | 'photos' | 'content' | 'events' | 'menu'>('dashboard');
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'photos' | 'rooms' | 'content' | 'events' | 'menu'>('rooms');
   const [draggedImage, setDraggedImage] = useState<string | null>(null);
 
   const handleImageDrop = (e: React.DragEvent, section: string) => {
@@ -32,7 +33,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = () => {
         <h1 className="text-3xl font-serif text-slate-800 mb-8">Hotel Admin Console</h1>
         
         <div className="flex flex-wrap mb-6 border-b">
-          {(['dashboard', 'photos', 'content', 'events', 'menu'] as const).map((section) => (
+          {(['dashboard', 'photos', 'rooms', 'content', 'events', 'menu'] as const).map((section) => (
             <button
               key={section}
               onClick={() => setActiveSection(section)}
@@ -67,10 +68,16 @@ export const AdminPanel: React.FC<AdminPanelProps> = () => {
           <div className="space-y-6">
             <h2 className="text-2xl font-semibold text-slate-800">Photo Management</h2>
             <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
-              <div className="text-center py-12">
-                <p className="text-lg text-slate-600 mb-2">Photo Management Temporarily Unavailable</p>
-                <p className="text-sm text-slate-500">Feature removed for frontend-only deployment</p>
-              </div>
+              <PhotoEditor />
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'rooms' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-slate-800">Accommodation Editor</h2>
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+              <RoomsAdmin />
             </div>
           </div>
         )}
